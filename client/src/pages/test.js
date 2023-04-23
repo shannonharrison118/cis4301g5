@@ -8,9 +8,9 @@ function TrafficVolume() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-        const response = await axios.get('http://localhost:5000/api/trafficVolCount', {
+        const response = await axios.get('http://localhost:5000/trafficVolCount', {
             params: { streetName },
-          });
+          } );
       setTrafficVolumeData(response.data);
     } catch (error) {
       console.error(error);
@@ -20,14 +20,14 @@ function TrafficVolume() {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <label>
+        {<label>
           Street Name:
           <input
             type="text"
             value={streetName}
             onChange={(event) => setStreetName(event.target.value)}
           />
-        </label>
+        </label> }
         <button type="submit">Get Traffic Volume Data</button>
       </form>
       <h2>Traffic Volume Data for {streetName}:</h2>

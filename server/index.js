@@ -3,7 +3,11 @@ import cors from "cors"
 import oracledb from "oracledb"
 
 const app=express();
-app.use(cors());
+//app.use(cors());
+app.use(cors({
+    origin: '*',
+    methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+}));
 
 const constr = {
     user: "audreyweigel",
@@ -18,19 +22,27 @@ Copy path into initOracleClient and replace it
 */         
 
 //oracledb.initOracleClient({libDir: 'C:/oracle/instantclient-basic-windows.x64-19.18.0.0.0dbru/instantclient_19_18'});            
-//oracledb.initOracleClient({libDir: '/Users/rachelpeterson/Downloads/instantclient_19_8'}); 
+oracledb.initOracleClient({libDir: '/Users/shannonharrison/Downloads/instantclient_19_8'}); 
 //oracledb.initOracleClient({libDir: 'C:/Users/trist/Oracle/instantclient_21_9'});    
 
+app.options('/getTrafficVolCount', function (req, res) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader('Access-Control-Allow-Methods', '*');
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    res.end();
+  });
+
 // get data for traffic volume count
-app.get("/getTrafficVolCount", (req, res)=> {
+app.get("/trafficVolCount", (req, res)=> {
     async function fetchTrafficVolCount() {
         let connection;
         try {
+            const { streetName } = req.query;
             connection = await oracledb.getConnection(constr);
             const result = await connection.execute(
-                `SELECT street, volume
-                FROM TRAFFICVOLCOUNT
-                WHERE street_name = :streetName`,
+                `SELECT street, vol
+                FROM EKINATAY.TRAFFICVOLCOUNT
+                WHERE street = :streetName`,
                 { streetName: req.query.streetName }
               );
           
