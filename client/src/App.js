@@ -17,6 +17,7 @@ function App() {
           <Link to="/electric"><button className="button" class="button">Electric Cars Prevelance in NYC</button></Link>
           <Link to="/borough"><button className="button" class="button">View By Borough</button></Link>
           <Link to="/custom"><button className="button" class="button">Custom Database Search</button></Link>
+          <Link to="/test"><button className="button" class="button">test</button></Link>
         </div>
       </div>
     </div>

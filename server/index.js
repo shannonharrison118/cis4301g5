@@ -27,11 +27,15 @@ app.get("/getTrafficVolCount", (req, res)=> {
         let connection;
         try {
             connection = await oracledb.getConnection(constr);
-            const sql = "SELECT * FROM trafficVolCount WHERE direction = :dir AND borough = :boro";
-            const result = await connection.execute(sql)(sql, {
-                dir: req.query.direction,
-                boro: req.query.borough
-              });
+            const result = await connection.execute(
+                `SELECT street, volume
+                FROM TRAFFICVOLCOUNT
+                WHERE street_name = :streetName`,
+                { streetName: req.query.streetName }
+              );
+          
+            const trafficVolumeData = result.rows.map(row => ({ streetName: row[0], volume: row[1] }));
+            res.json(trafficVolumeData);
         }
         catch (err) {
             console.log(err);
@@ -49,4 +53,5 @@ app.get("/getTrafficVolCount", (req, res)=> {
     fetchTrafficVolCount();
 });
 
-app.listen(1521, ()=> console.log("app is running"));
+
+app.listen(5000, ()=> console.log("app is running"));
