@@ -188,6 +188,70 @@ app.get("/query3", (req, res) => {
     }
     fetchQuery4();
   });
+
+  app.get("/query5", (req, res) => {
+    async function fetchQuery5() {
+      let connection;
+      try {
+        //const { borough } = req.query;
+        connection = await oracledb.getConnection(constr);
+        const result = await connection.execute(
+          `WITH yearly_volume AS (
+            SELECT
+              YR,
+              SUM(VOL) AS total_volume
+            FROM EKINATAY.TRAFFICVOLCOUNT
+            WHERE YR BETWEEN 2018 AND 2020
+            GROUP BY YR
+          ),
+          monthly_collisions AS (
+            SELECT
+              EXTRACT(YEAR FROM CRASHDATE) AS collision_year,
+              EXTRACT(MONTH FROM CRASHDATE) AS collision_month,
+              COUNT(*) AS collision_count
+            FROM SHANNONHARRISON.VEHICLECOLLISIONS
+            WHERE EXTRACT(YEAR FROM CRASHDATE) BETWEEN 2016 AND 2020
+            GROUP BY EXTRACT(YEAR FROM CRASHDATE), EXTRACT(MONTH FROM CRASHDATE)
+          ),
+          average_monthly_collisions AS (
+            SELECT
+              collision_year,
+              AVG(collision_count) AS avg_monthly_collisions
+            FROM monthly_collisions
+            GROUP BY collision_year
+          )
+          SELECT
+            e."year",
+            e.REGISTRATIONS,
+            y.total_volume,
+            m.MEDIANGROSSINCOME,
+            a.avg_monthly_collisions
+          FROM EKINATAY.evRegistrations e
+          JOIN EKINATAY.medianIncome m ON e."year" = m."year"
+          LEFT JOIN yearly_volume y ON e."year" = y.YR
+          LEFT JOIN average_monthly_collisions a ON e."year" = a.collision_year
+          WHERE e."year" BETWEEN 2011 AND 2020
+          ORDER BY e."year"`,
+        //{ borough: req.query.borough }
+        );
+        const taxElectric = result.rows.map(row => ({ year: row[0], registrations: row[1], total_volume: row[2], mediangrossincome: row[3], avg_montly_collisions: row[4] }));
+        res.json(taxElectric);
+      } catch (err) {
+        console.log(err);
+        // Send an error response if something goes wrong
+        res.status(500).json({ error: "An error occurred while fetching data." });
+      } finally {
+        if (connection) {
+          try {
+            await connection.close();
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+    }
+    fetchQuery5();
+  });
   
 
 app.listen(5000, ()=> console.log("app is running"));
