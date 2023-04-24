@@ -1,17 +1,53 @@
-import React from 'react';
-import '../App.css';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {Navbar} from '../components/navbar.js';
+import axios from 'axios';
+import '../App.css';
 
+function Query4() {
+  const [borough, setBorough] = useState('');
+  const [mostBusy, setMostBusy] = useState([]);
 
-function Closure() {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+        const response = await axios.get('http://localhost:5000/query4',
+        {params: { borough }}
+        );
+        setMostBusy(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="App">
-      <Navbar />
-      <p>show grpahs related to all street closures and construction reroutes</p>
-      <p>queries 1 and 2 examples</p>
+      <div>
+        <Navbar />
+        <p>graphs and analysis related to borough specific trends in traffic</p>
+        <p>queries 3 and 4 for examples</p>
+      </div>
+      <form onSubmit={handleSubmit}>
+        {<label>
+          Select Borough:
+          <input
+            type="text"
+            value={borough}
+            onChange={(event) => setBorough(event.target.value)}
+          />
+        </label>} 
+        <button type="submit">Get Most Busy Streets</button>
+      </form>
+      <h2>Most Busy Streets in Each Borough:</h2>
+      <ul>
+        {mostBusy.map((data, index) => (
+          <li key={index}>
+            {data.borough}, hour (in 24):{data.hour}, average num of cars:{data.avg_cars}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-export default Closure;
+export default Query4;
