@@ -25,7 +25,7 @@ function Query4() {
       <div>
         <Navbar />
         <p>graphs and analysis related to borough specific trends in traffic</p>
-        <p>queries 3 and 4 for examples</p>
+        <p>query 4</p>
       </div>
       <form onSubmit={handleSubmit}>
         {<label>

@@ -1,40 +1,48 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {Navbar} from '../components/navbar.js';
 import axios from 'axios';
+import '../App.css';
 
-function TrafficVolume() {
-  const [streetName, setStreetName] = useState('');
-  const [trafficVolumeData, setTrafficVolumeData] = useState([]);
+function Query2() {
+  const [street, setStreet] = useState('');
+  const [avgTraffic, setAvgTraffic] = useState([]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-        const response = await axios.get('http://localhost:5000/trafficVolCount', {
-            params: { streetName },
+        const response = await axios.get('http://localhost:5000/query2', {
+            params: { street },
           } );
-      setTrafficVolumeData(response.data);
+          setAvgTraffic(response.data);
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <div>
+    <div className="App">
+      <div>
+        <Navbar />
+        <p>graphs and analysis related to borough specific trends in traffic</p>
+        <p>query 2</p>
+      </div>
       <form onSubmit={handleSubmit}>
         {<label>
-          Street Name:
+          Select Street:
           <input
             type="text"
-            value={streetName}
-            onChange={(event) => setStreetName(event.target.value)}
+            value={street}
+            onChange={(event) => setStreet(event.target.value)}
           />
-        </label> }
-        <button type="submit">Get Traffic Volume Data</button>
+        </label>}
+        <button type="submit">Get Average Traffic Count during work hours</button>
       </form>
-      <h2>Traffic Volume Data for {streetName}:</h2>
+      <h2>Average Traffic Count on {street}:</h2>
       <ul>
-        {trafficVolumeData.map((data, index) => (
+        {avgTraffic.map((data, index) => (
           <li key={index}>
-            {data.streetName}: {data.volume}
+            {data.street}: {data.year}: {data.month}: {data.day}: {data.avg_traffic}
           </li>
         ))}
       </ul>
@@ -42,4 +50,4 @@ function TrafficVolume() {
   );
 }
 
-export default TrafficVolume;
+export default Query2;

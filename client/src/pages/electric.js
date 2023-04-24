@@ -24,7 +24,7 @@ function Query5() {
       <div>
         <Navbar />
         <p>graphs and analysis related to electric cars</p>
-        <p>query 5 for examples</p>
+        <p>query 5</p>
       </div>
       <form onSubmit={handleSubmit}>
         

@@ -25,14 +25,31 @@ Copy path into initOracleClient and replace it
 oracledb.initOracleClient({libDir: '/Users/shannonharrison/Downloads/instantclient_19_8'}); 
 //oracledb.initOracleClient({libDir: 'C:/Users/trist/Oracle/instantclient_21_9'});    
 
-app.options('/getTrafficVolCount', function (req, res) {
+app.options('/getQuery1', function (req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader('Access-Control-Allow-Methods', '*');
     res.setHeader("Access-Control-Allow-Headers", "*");
     res.end();
-  });
-
+});
+app.options('/getQuery2', function (req, res) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader('Access-Control-Allow-Methods', '*');
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    res.end();
+});
 app.options('/getQuery3', function (req, res) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader('Access-Control-Allow-Methods', '*');
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    res.end();
+});
+app.options('/getQuery4', function (req, res) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader('Access-Control-Allow-Methods', '*');
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    res.end();
+});
+app.options('/getQuery5', function (req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader('Access-Control-Allow-Methods', '*');
     res.setHeader("Access-Control-Allow-Headers", "*");
@@ -70,6 +87,85 @@ app.get("/trafficVolCount", (req, res)=> {
         }
     }
     fetchTrafficVolCount();
+});
+
+
+app.get("/query1", (req, res) => {
+    async function fetchQuery1() {
+      let connection;
+      try {
+        const { street } = req.query;
+        connection = await oracledb.getConnection(constr);
+        const result = await connection.execute(
+          `SELECT ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet, EKINATAY.TRAFFICVOLCOUNT.yr, EKINATAY.TRAFFICVOLCOUNT.m, EKINATAY.TRAFFICVOLCOUNT.d, AVG(EKINATAY.TRAFFICVOLCOUNT.vol) AS avg_daily_vol_count
+          FROM ANDREAMORENO1.CONSTRUCTIONCLOSURES
+          INNER JOIN EKINATAY.TRAFFICVOLCOUNT
+          ON ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet = EKINATAY.TRAFFICVOLCOUNT.street
+          WHERE ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet = :street
+            AND EKINATAY.TRAFFICVOLCOUNT.yr = ANDREAMORENO1.CONSTRUCTIONCLOSURES.workStartYear
+            AND EKINATAY.TRAFFICVOLCOUNT.m = ANDREAMORENO1.CONSTRUCTIONCLOSURES.workStartMonth
+            AND EKINATAY.TRAFFICVOLCOUNT.d >= ANDREAMORENO1.CONSTRUCTIONCLOSURES.workStartDay
+            AND EKINATAY.TRAFFICVOLCOUNT.d <= ANDREAMORENO1.CONSTRUCTIONCLOSURES.workEndDay
+            AND EKINATAY.TRAFFICVOLCOUNT.hh >= 9 AND EKINATAY.TRAFFICVOLCOUNT.hh <= 16
+          GROUP BY ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet, EKINATAY.TRAFFICVOLCOUNT.yr, EKINATAY.TRAFFICVOLCOUNT.m, EKINATAY.TRAFFICVOLCOUNT.d`,
+          { street: req.query.street }
+        );
+        const avgTraffic = result.rows.map(row => ({ street: row[0], year: row[1], month: row[2], day: row[3], avg_traffic: row[4] }));
+        res.json(avgTraffic);
+      } catch (err) {
+        console.log(err);
+        // Send an error response if something goes wrong
+        res.status(500).json({ error: "An error occurred while fetching data." });
+      } finally {
+        if (connection) {
+          try {
+            await connection.close();
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+    }
+    fetchQuery1();
+});
+
+app.get("/query2", (req, res) => {
+    async function fetchQuery2() {
+        let connection;
+        try {
+            const { street } = req.query;
+            connection = await oracledb.getConnection(constr);
+            const result = await connection.execute(
+                `SELECT ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet, EKINATAY.TRAFFICVOLCOUNT.yr, EKINATAY.TRAFFICVOLCOUNT.m, EKINATAY.TRAFFICVOLCOUNT.d, AVG(EKINATAY.TRAFFICVOLCOUNT.vol) AS avg_daily_vol_count
+          FROM ANDREAMORENO1.CONSTRUCTIONCLOSURES
+          INNER JOIN EKINATAY.TRAFFICVOLCOUNT
+          ON ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet = EKINATAY.TRAFFICVOLCOUNT.street
+          WHERE ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet = :street
+            AND EKINATAY.TRAFFICVOLCOUNT.yr = ANDREAMORENO1.CONSTRUCTIONCLOSURES.workStartYear
+            AND EKINATAY.TRAFFICVOLCOUNT.m = ANDREAMORENO1.CONSTRUCTIONCLOSURES.workStartMonth
+            AND EKINATAY.TRAFFICVOLCOUNT.d >= ANDREAMORENO1.CONSTRUCTIONCLOSURES.workStartDay
+            AND EKINATAY.TRAFFICVOLCOUNT.d <= ANDREAMORENO1.CONSTRUCTIONCLOSURES.workEndDay
+            AND EKINATAY.TRAFFICVOLCOUNT.hh >= 9 AND EKINATAY.TRAFFICVOLCOUNT.hh <= 16
+          GROUP BY ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet, EKINATAY.TRAFFICVOLCOUNT.yr, EKINATAY.TRAFFICVOLCOUNT.m, EKINATAY.TRAFFICVOLCOUNT.d`,
+                { street: req.query.street }
+            );
+            const avgTraffic = result.rows.map(row => ({ street: row[0], year: row[1], month: row[2], day: row[3], avg_traffic: row[4] }));
+            res.json(avgTraffic);
+        } catch (err) {
+            console.log(err);
+            // Send an error response if something goes wrong
+            res.status(500).json({ error: "An error occurred while fetching data." });
+        } finally {
+            if (connection) {
+                try {
+                    await connection.close();
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+        }
+    }
+    fetchQuery2();
 });
 
 app.get("/query3", (req, res) => {
@@ -143,7 +239,7 @@ app.get("/query3", (req, res) => {
     fetchQuery3();
   });
 
-  app.get("/query4", (req, res) => {
+app.get("/query4", (req, res) => {
     async function fetchQuery4() {
       let connection;
       try {
@@ -156,7 +252,7 @@ app.get("/query3", (req, res) => {
             WHERE YR = 2019 AND M BETWEEN 6 AND 8 AND BORO = :borough
             GROUP BY BORO, HH
         )
-        SELECT BORO AS bsorough, HH AS hour, avg_cars
+        SELECT BORO AS borough, HH AS hour, avg_cars
         FROM hourly_avg
         WHERE (BORO, HH, avg_cars) IN (
             SELECT BORO, HH, MAX(avg_cars)
