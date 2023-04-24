@@ -136,21 +136,38 @@ app.get("/query2", (req, res) => {
             const { street } = req.query;
             connection = await oracledb.getConnection(constr);
             const result = await connection.execute(
-                `SELECT ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet, EKINATAY.TRAFFICVOLCOUNT.yr, EKINATAY.TRAFFICVOLCOUNT.m, EKINATAY.TRAFFICVOLCOUNT.d, AVG(EKINATAY.TRAFFICVOLCOUNT.vol) AS avg_daily_vol_count
-          FROM ANDREAMORENO1.CONSTRUCTIONCLOSURES
-          INNER JOIN EKINATAY.TRAFFICVOLCOUNT
-          ON ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet = EKINATAY.TRAFFICVOLCOUNT.street
-          WHERE ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet = :street
-            AND EKINATAY.TRAFFICVOLCOUNT.yr = ANDREAMORENO1.CONSTRUCTIONCLOSURES.workStartYear
-            AND EKINATAY.TRAFFICVOLCOUNT.m = ANDREAMORENO1.CONSTRUCTIONCLOSURES.workStartMonth
-            AND EKINATAY.TRAFFICVOLCOUNT.d >= ANDREAMORENO1.CONSTRUCTIONCLOSURES.workStartDay
-            AND EKINATAY.TRAFFICVOLCOUNT.d <= ANDREAMORENO1.CONSTRUCTIONCLOSURES.workEndDay
-            AND EKINATAY.TRAFFICVOLCOUNT.hh >= 9 AND EKINATAY.TRAFFICVOLCOUNT.hh <= 16
-          GROUP BY ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet, EKINATAY.TRAFFICVOLCOUNT.yr, EKINATAY.TRAFFICVOLCOUNT.m, EKINATAY.TRAFFICVOLCOUNT.d`,
+                `SELECT ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet,
+                ANDREAMORENO1.DIRECTIONCHANGESFIXED.newdirection,
+                ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeday,
+                ANDREAMORENO1.DIRECTIONCHANGESFIXED.changemonth,
+                ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeyear,
+                EKINATAY.TRAFFICVOLCOUNT.yr,
+                EKINATAY.TRAFFICVOLCOUNT.m,
+                EKINATAY.TRAFFICVOLCOUNT.d,
+                EKINATAY.TRAFFICVOLCOUNT.hh,
+                SUM(EKINATAY.TRAFFICVOLCOUNT.vol) as sum_vol_dir 
+                FROM ANDREAMORENO1.DIRECTIONCHANGESFIXED
+                INNER JOIN EKINATAY.TRAFFICVOLCOUNT
+                ON ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet = EKINATAY.TRAFFICVOLCOUNT.street
+                WHERE EKINATAY.TRAFFICVOLCOUNT.yr = ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeyear
+                    AND EKINATAY.TRAFFICVOLCOUNT.m = ANDREAMORENO1.DIRECTIONCHANGESFIXED.changemonth 
+                    AND EKINATAY.TRAFFICVOLCOUNT.d >= (ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeday - 5)
+                    AND EKINATAY.TRAFFICVOLCOUNT.d <= (ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeday + 5)
+                    AND ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet = :street
+                GROUP BY ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet, 
+                    ANDREAMORENO1.DIRECTIONCHANGESFIXED.newdirection,
+                    ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeday,
+                    ANDREAMORENO1.DIRECTIONCHANGESFIXED.changemonth,
+                    ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeyear,
+                    EKINATAY.TRAFFICVOLCOUNT.yr,
+                    EKINATAY.TRAFFICVOLCOUNT.m,
+                    EKINATAY.TRAFFICVOLCOUNT.d,
+                    EKINATAY.TRAFFICVOLCOUNT.hh`,
                 { street: req.query.street }
             );
-            const avgTraffic = result.rows.map(row => ({ street: row[0], year: row[1], month: row[2], day: row[3], avg_traffic: row[4] }));
-            res.json(avgTraffic);
+            const streetChange = result.rows.map(row => ({ onStreet: row[0], newdirection: row[1], changeday: row[2], changemonth: row[3], changeyear: row[4],
+                yr: row[5], m: row[6], d: row[7], hh: row[8], sum_vol_dir: row[9] }));
+            res.json(streetChange);
         } catch (err) {
             console.log(err);
             // Send an error response if something goes wrong

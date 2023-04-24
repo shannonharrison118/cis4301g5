@@ -42,7 +42,8 @@ function Query2() {
       <ul>
         {avgTraffic.map((data, index) => (
           <li key={index}>
-            {data.street}: {data.year}: {data.month}: {data.day}: {data.avg_traffic}
+            {data.onStreet}: {data.newdirection}: {data.changeday}: {data.changemonth}: {data.changeyear}: 
+            {data.yr}: {data.m}: {data.d}: {data.hh}: {data.sum_vol_dir}:
           </li>
         ))}
       </ul>
