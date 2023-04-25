@@ -23,8 +23,8 @@ Copy path into initOracleClient and replace it
 
 //oracledb.initOracleClient({libDir: 'C:/oracle/instantclient-basic-windows.x64-19.18.0.0.0dbru/instantclient_19_18'});            
 //oracledb.initOracleClient({libDir: '/Users/ekin/Downloads/instantclient_19_8'}); 
-//oracledb.initOracleClient({libDir: '/Users/shannonharrison/Downloads/instantclient_19_8'}); 
-oracledb.initOracleClient({libDir: '/Users/audreywiggles/Downloads/instantclient_19_8'});
+oracledb.initOracleClient({libDir: '/Users/shannonharrison/Downloads/instantclient_19_8'}); 
+//oracledb.initOracleClient({libDir: '/Users/audreywiggles/Downloads/instantclient_19_8'});
 
 app.options('/getQuery1', function (req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -138,7 +138,7 @@ app.get("/query2", (req, res) => {
             const { street } = req.query;
             connection = await oracledb.getConnection(constr);
             const result = await connection.execute(
-                `SELECT ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet,
+                /* `SELECT ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet,
                 ANDREAMORENO1.DIRECTIONCHANGESFIXED.newdirection,
                 ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeday,
                 ANDREAMORENO1.DIRECTIONCHANGESFIXED.changemonth,
@@ -164,8 +164,40 @@ app.get("/query2", (req, res) => {
                     EKINATAY.TRAFFICVOLCOUNT.yr,
                     EKINATAY.TRAFFICVOLCOUNT.m,
                     EKINATAY.TRAFFICVOLCOUNT.d,
-                    EKINATAY.TRAFFICVOLCOUNT.hh`,
-                { street: req.query.street }
+                    EKINATAY.TRAFFICVOLCOUNT.hh`, */
+              `SELECT ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet,
+                ANDREAMORENO1.DIRECTIONCHANGESFIXED.newdirection,
+                ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeday,
+                ANDREAMORENO1.DIRECTIONCHANGESFIXED.changemonth,
+                ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeyear,
+                EKINATAY.TRAFFICVOLCOUNT.yr,
+                EKINATAY.TRAFFICVOLCOUNT.m,
+                EKINATAY.TRAFFICVOLCOUNT.d,
+                SUM(EKINATAY.TRAFFICVOLCOUNT.vol) as sum_vol_dir,
+                AVG(EKINATAY.TRAFFICVOLCOUNT.vol) as avg_volume 
+              FROM 
+                ANDREAMORENO1.DIRECTIONCHANGESFIXED
+              INNER JOIN EKINATAY.TRAFFICVOLCOUNT
+              ON ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet = EKINATAY.TRAFFICVOLCOUNT.street
+            WHERE 
+              EKINATAY.TRAFFICVOLCOUNT.yr = ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeyear
+              AND EKINATAY.TRAFFICVOLCOUNT.m = ANDREAMORENO1.DIRECTIONCHANGESFIXED.changemonth 
+              AND EKINATAY.TRAFFICVOLCOUNT.d >= (ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeday - 5)
+              AND EKINATAY.TRAFFICVOLCOUNT.d <= (ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeday + 5)
+              AND ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet = :street
+            GROUP BY 
+              ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet,
+              ANDREAMORENO1.DIRECTIONCHANGESFIXED.newdirection,
+              ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeday,
+              ANDREAMORENO1.DIRECTIONCHANGESFIXED.changemonth,
+              ANDREAMORENO1.DIRECTIONCHANGESFIXED.changeyear,
+              EKINATAY.TRAFFICVOLCOUNT.yr,
+              EKINATAY.TRAFFICVOLCOUNT.m,
+              EKINATAY.TRAFFICVOLCOUNT.d
+            ORDER BY 
+              ANDREAMORENO1.DIRECTIONCHANGESFIXED.onStreet,
+              EKINATAY.TRAFFICVOLCOUNT.d`,
+            { street: req.query.street }
             );
             const streetChange = result.rows.map(row => ({ onStreet: row[0], newdirection: row[1], changeday: row[2], changemonth: row[3], changeyear: row[4],
                 yr: row[5], m: row[6], d: row[7], hh: row[8], sum_vol_dir: row[9] }));

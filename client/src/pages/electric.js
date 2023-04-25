@@ -47,7 +47,7 @@ function Query5() {
         backgroundColor: 'rgba(100, 99, 132, 0.5)',
         xAxisID: "x",
         yAxisID: "y2"
-      },
+      }
     ],
   };
 
