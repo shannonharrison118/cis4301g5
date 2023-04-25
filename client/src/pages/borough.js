@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {Navbar} from '../components/navbar.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { Faker, useFaker } from 'react-fakers'
 import axios from 'axios';
 import '../App.css';
 
@@ -21,42 +32,65 @@ function Query3() {
     }
   };
 
-  let chartData = {};
-  let chartOptions = {};
-
-  if (mostDanger.length > 0) {
-    chartData = {
-      labels: mostDanger.map((data) => data.onStreet),
+  /* let chartData = [];
+  let chartOptions = [];
+ */
+  //if (mostDanger.length > 0) {
+    const labels = ['2018', '2019', '2020'];
+    const chartData = {
+      labels,
       datasets: [
         {
           label: 'Number of Collisions',
           data: mostDanger.map((data) => data.num_collisions),
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1,
-        },
-        {
-          label: 'Average Volume',
-          data: mostDanger.map((data) => data.avg_volume),
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1,
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          yAxisID: "y"
         },
       ],
     };
 
-    chartOptions = {
-      scales: {
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-            },
-          },
-        ],
+    const chartOptions = {
+      responsive: true,
+      interaction: {
+        mode: 'index',
+        intersect: false,
       },
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'Chart.js Line Chart',
+        },
+      },
+      scales: {
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left'
+        },
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          autoPadding: true
+        }
+      }
     };
-  }
+  //}
+
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+  );
 
   return (
     <div className="App">
@@ -84,9 +118,14 @@ function Query3() {
           </li>
         ))}
       </ul>
-      {mostDanger.size > 0 ? (
-        <Line data={chartData} options={chartOptions} />
-      ) : null}
+      {Object.keys(chartData).length > 0 && <Line data={chartData} options={chartOptions} />}
+
+{/*       console.log(chartData.datasets[0].data);
+ */}
+      {/* <Line data={console.log(chartData.datasets[0].data)} options={chartOptions} />   */}
+      {/* {chartData.datasets[0].data ? (
+        <Line data={(chartData.datasets[0].data)} options={chartOptions} />
+      ) : null} */}
     </div>
   );
 }
