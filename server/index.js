@@ -56,6 +56,12 @@ app.options('/getQuery5', function (req, res) {
     res.setHeader("Access-Control-Allow-Headers", "*");
     res.end();
 });
+app.options('/getQuery6', function (req, res) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader('Access-Control-Allow-Methods', '*');
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    res.end();
+});
 
 // get data for traffic volume count
 app.get("/trafficVolCount", (req, res)=> {
@@ -383,6 +389,54 @@ app.get("/query4", (req, res) => {
     }
     fetchQuery5();
   });
+
+  app.get("/query6", (req, res) => { 
+    async function fetchQuery6() {
+      let connection;
+      try {
+        const { borough } = req.query;
+        connection = await oracledb.getConnection(constr);
+        const result = await connection.execute(
+          `SELECT SUM(tuple_count) AS total_tuples
+          FROM (
+            SELECT COUNT(*) AS tuple_count
+            FROM ekinatay.trafficVolCount
+            UNION ALL
+            SELECT COUNT(*) AS tuple_count
+            FROM SHANNONHARRISON.VEHICLECOLLISIONS
+            UNION ALL
+            SELECT COUNT(*) AS tuple_count
+            FROM EKINATAY.evRegistrations
+            UNION ALL
+            SELECT COUNT(*) AS tuple_count
+            FROM EKINATAY.medianIncome
+            UNION ALL
+            SELECT COUNT(*) AS tuple_count
+            FROM ANDREAMORENO1.DIRECTIONCHANGESFIXED
+            UNION ALL
+            SELECT COUNT(*) AS tuple_count
+            FROM ANDREAMORENO1.CONSTRUCTIONCLOSURES
+          ) all_tables`,
+        );
+        const totalTuples = result.rows.map(row => ({ total_tuples: row[0] }));
+        res.json(totalTuples);
+      } catch (err) {
+        console.log(err);
+        // Send an error response if something goes wrong
+        res.status(500).json({ error: "An error occurred while fetching data." });
+      } finally {
+        if (connection) {
+          try {
+            await connection.close();
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+    }
+    fetchQuery6();
+  });
+          
   
 
 app.listen(5000, ()=> console.log("app is running"));
