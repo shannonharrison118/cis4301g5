@@ -24,7 +24,7 @@ function Query4() {
     <div className="App">
       <div>
         <Navbar />
-        <p>graphs and analysis related to borough specific trends in traffic</p>
+        <p>What is the hourly average vehicle count for each borough?</p>
         <p>query 4</p>
       </div>
       <form onSubmit={handleSubmit}>
@@ -36,13 +36,13 @@ function Query4() {
             onChange={(event) => setBorough(event.target.value)}
           />
         </label>} 
-        <button type="submit">Get Most Busy Streets</button>
+        <button type="submit">View busiest hours </button>
       </form>
-      <h2>Most Busy Streets in Each Borough:</h2>
+      <h2>Most Busy Times of day in {borough}:</h2>
       <ul>
         {mostBusy.map((data, index) => (
           <li key={index}>
-            {data.borough}, hour (in 24):{data.hour}, average num of cars:{data.avg_cars}
+            {data.borough}, hour (in 24): {data.hour}, average num of cars: {data.avg_cars}
           </li>
         ))}
       </ul>
