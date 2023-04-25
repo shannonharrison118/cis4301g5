@@ -29,7 +29,7 @@ function App() {
     <div className="App">
       <Navbar />
       <div class="home">
-        <h1>Welcome to NYC Traffic Analyzer</h1>
+        <h1>Welcome to NYC Traffic Analyzer!</h1>
         <p>Project by: Audrey Weigel, Ekin Atay, Andrea Moreno, and Shannon Harrison</p>
         <form onSubmit={handleSubmit}>
               <button type="submit">See Total Tuples</button>
