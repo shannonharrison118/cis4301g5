@@ -9,9 +9,8 @@ function App() {
     <div className="App">
       <Navbar />
       <div class="home">
-        <h1>Welcome to NYC Traffic Analyzer</h1>
+        <h1>Welcome to NYC Traffic Analyzer!</h1>
         <p>Project by: Audrey Weigel, Ekin Atay, Andrea Moreno, and Shannon Harrison</p>
-        <small>***might need to go to a log in screen for the oracle stuff to connect***</small>
         <div class="opt">
           <Link to="/closure"><button className="button" class="button">Busy Boroughs Q4</button></Link>
           <Link to="/electric"><button className="button" class="button">Electric Vehicle Use Q5</button></Link>
