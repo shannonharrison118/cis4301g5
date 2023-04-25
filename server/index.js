@@ -22,7 +22,8 @@ Copy path into initOracleClient and replace it
 */         
 
 //oracledb.initOracleClient({libDir: 'C:/oracle/instantclient-basic-windows.x64-19.18.0.0.0dbru/instantclient_19_18'});            
-oracledb.initOracleClient({libDir: '/Users/ekin/Downloads/instantclient_19_8'}); 
+//oracledb.initOracleClient({libDir: '/Users/ekin/Downloads/instantclient_19_8'}); 
+oracledb.initOracleClient({libDir: '/Users/shannonharrison/Downloads/instantclient_19_8'}); 
 //oracledb.initOracleClient({libDir: 'C:/Users/trist/Oracle/instantclient_21_9'});    
 
 app.options('/getQuery1', function (req, res) {
@@ -107,7 +108,8 @@ app.get("/query1", (req, res) => {
             AND EKINATAY.TRAFFICVOLCOUNT.d >= ANDREAMORENO1.CONSTRUCTIONCLOSURES.workStartDay
             AND EKINATAY.TRAFFICVOLCOUNT.d <= ANDREAMORENO1.CONSTRUCTIONCLOSURES.workEndDay
             AND EKINATAY.TRAFFICVOLCOUNT.hh >= 9 AND EKINATAY.TRAFFICVOLCOUNT.hh <= 16
-          GROUP BY ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet, EKINATAY.TRAFFICVOLCOUNT.yr, EKINATAY.TRAFFICVOLCOUNT.m, EKINATAY.TRAFFICVOLCOUNT.d`,
+          GROUP BY ANDREAMORENO1.CONSTRUCTIONCLOSURES.onStreet, EKINATAY.TRAFFICVOLCOUNT.yr, EKINATAY.TRAFFICVOLCOUNT.m, EKINATAY.TRAFFICVOLCOUNT.d
+          ORDER BY EKINATAY.TRAFFICVOLCOUNT.d`,
           { street: req.query.street }
         );
         const avgTraffic = result.rows.map(row => ({ street: row[0], year: row[1], month: row[2], day: row[3], avg_traffic: row[4] }));
