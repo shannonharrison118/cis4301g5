@@ -15,6 +15,7 @@ import { Line } from 'react-chartjs-2';
 import axios from 'axios';
 import '../App.css';
 
+
 function Query2() {
   const [street, setStreet] = useState('');
   const [avgTraffic, setAvgTraffic] = useState([]);

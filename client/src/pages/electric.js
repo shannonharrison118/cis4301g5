@@ -71,6 +71,7 @@ function Query5() {
         type: 'linear',
         display: true,
         position: 'left',
+        
         /* max: 31,
         min: 1,
         ticks: {
@@ -95,6 +96,7 @@ function Query5() {
         autoPadding: true
       }
     }
+    
   };
 
   ChartJS.register(
