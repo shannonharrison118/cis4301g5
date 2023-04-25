@@ -35,12 +35,12 @@ function Query3() {
   let chartOptions = [];
  */
   //if (mostDanger.length > 0) {
-    const labels = ['2018', '2019', '2020'];
+    const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October','November','December'];
     const chartData = {
       labels,
       datasets: [
         {
-          label: 'Number of Collisions',
+          label: 'Number of Collisions Per Month',
           data: mostDanger.map((data) => data.num_collisions),
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
@@ -107,13 +107,13 @@ function Query3() {
             onChange={(event) => setBorough(event.target.value)}
           />
         </label>}
-        <button type="submit">Get Most Dangerous Streets</button>
+        <button type="submit">Get Collisions Per Borough</button>
       </form>
-      <h2>Most Dangerous Streets in {borough}:</h2>
+      <h2>Get Collisions in {borough}:</h2>
       <ul>
         {mostDanger.map((data, index) => (
           <li key={index}>
-            {data.borough}: {data.onStreet}: {data.year}: {data.num_collisions}: {data.avg_volume}
+            {data.borough}: {data.month}: {data.num_collisions}
           </li>
         ))}
       </ul>

@@ -23,8 +23,8 @@ Copy path into initOracleClient and replace it
 
 //oracledb.initOracleClient({libDir: 'C:/oracle/instantclient-basic-windows.x64-19.18.0.0.0dbru/instantclient_19_18'});            
 //oracledb.initOracleClient({libDir: '/Users/ekin/Downloads/instantclient_19_8'}); 
-oracledb.initOracleClient({libDir: '/Users/shannonharrison/Downloads/instantclient_19_8'}); 
-//oracledb.initOracleClient({libDir: 'C:/Users/trist/Oracle/instantclient_21_9'});    
+//oracledb.initOracleClient({libDir: '/Users/shannonharrison/Downloads/instantclient_19_8'}); 
+oracledb.initOracleClient({libDir: '/Users/audreywiggles/Downloads/instantclient_19_8'});
 
 app.options('/getQuery1', function (req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -194,52 +194,36 @@ app.get("/query3", (req, res) => {
         const { borough } = req.query;
         connection = await oracledb.getConnection(constr);
         const result = await connection.execute(
-          `WITH collisions_and_volume AS (
-            SELECT
-                sh.borough,
-                sh.onStreet,
-                sh.crashDate,
-                sh.crashTime,
-                ek.YR AS year,
-                ek.VOL AS volume
-            FROM SHANNONHARRISON.VEHICLECOLLISIONS sh
-            JOIN EKINATAY.TRAFFICVOLCOUNT ek
-                ON UPPER(sh.borough) = UPPER(ek.BORO) AND UPPER(sh.onStreet) = UPPER(ek.STREET)
-            WHERE ek.YR BETWEEN 2018 AND 2020 AND ek.VOL > 30 AND sh.borough = :borough
-        ),
-        collisions_count AS (
+          `WITH collisions_by_month AS (
             SELECT
                 borough,
-                onStreet,
-                year,
-                COUNT(*) AS num_collisions,
-                AVG(volume) AS avg_volume
-            FROM collisions_and_volume
-            WHERE borough = :borough
-            GROUP BY borough, onStreet, year
+                TO_CHAR(crashDate, 'YYYY-MM') AS month,
+                COUNT(*) AS num_collisions
+            FROM SHANNONHARRISON.VEHICLECOLLISIONS
+            WHERE crashDate BETWEEN TO_DATE('2019-01-01', 'YYYY-MM-DD') AND TO_DATE('2019-12-31', 'YYYY-MM-DD') AND borough = :borough
+            GROUP BY borough, TO_CHAR(crashDate, 'YYYY-MM')
+        ),
+        traffic_volume_by_month AS (
+            SELECT
+                boro,
+                TO_CHAR(TO_DATE(YR || '-' || M || '-01', 'YYYY-MM-DD'), 'YYYY-MM') AS month,
+                AVG(VOL) AS avg_volume
+            FROM EKINATAY.TRAFFICVOLCOUNT
+            WHERE YR BETWEEN 2019 AND 2019
+            GROUP BY boro, TO_CHAR(TO_DATE(YR || '-' || M || '-01', 'YYYY-MM-DD'), 'YYYY-MM')
         )
         SELECT
             c.borough,
-            c.onStreet,
-            c.year,
+            c.month,
             c.num_collisions,
-            c.avg_volume
-        FROM collisions_count c
-        JOIN (
-            SELECT
-                borough,
-                year,
-                MAX(num_collisions) AS max_collisions
-            FROM collisions_count
-            WHERE borough = :borough
-            GROUP BY borough, year
-        ) max_c
-        ON c.borough = max_c.borough AND c.num_collisions = max_c.max_collisions AND c.year = max_c.year
-        WHERE c.borough = :borough AND max_c.borough = :borough
-        ORDER BY c.borough, c.year, c.num_collisions DESC`,
+            t.avg_volume
+        FROM collisions_by_month c
+        LEFT JOIN traffic_volume_by_month t
+            ON c.borough = t.boro AND c.month = t.month
+        ORDER BY c.borough, c.month`,
           { borough: req.query.borough }
         );
-        const mostDanger = result.rows.map(row => ({ borough: row[0], onStreet: row[1], year: row[2], num_collisions: row[3], avg_volume: row[4] }));
+        const mostDanger = result.rows.map(row => ({ borough: row[0], month: row[1], num_collisions: row[2]}));
         res.json(mostDanger);
       } catch (err) {
         console.log(err);
