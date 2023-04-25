@@ -99,7 +99,7 @@ ChartJS.register(
     <div className="App">
       <div>
         <Navbar />
-        <p>What is the hourly average vehicle count for each borough?</p>
+        <p>View the busiest times of day for a given borough.</p>
         <p>query 4</p>
       </div>
       <form onSubmit={handleSubmit}>
@@ -111,9 +111,9 @@ ChartJS.register(
             onChange={(event) => setBorough(event.target.value)}
           />
         </label>} 
-        <button type="submit">View busiest hours </button>
+        <button type="submit">View Busiest Hours </button>
       </form>
-      <h2>Most Busy Times of day in {borough}:</h2>
+      <h2>Average Count by Hour in {borough}:</h2>
       <ul>
         {mostBusy.map((data, index) => (
           <li key={index}>

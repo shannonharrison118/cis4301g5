@@ -61,7 +61,7 @@ function Query3() {
         },
         title: {
           display: true,
-          text: 'Chart.js Line Chart',
+          text: 'Total Collisions vs. Month',
         },
       },
       scales: {
@@ -95,7 +95,7 @@ function Query3() {
     <div className="App">
       <div>
         <Navbar />
-        <p>graphs and analysis related to borough specific trends in traffic</p>
+        <p>View the monthly number of collisions given a specific borough.</p>
         <p>query 3</p>
       </div>
       <form onSubmit={handleSubmit}>
@@ -107,7 +107,7 @@ function Query3() {
             onChange={(event) => setBorough(event.target.value)}
           />
         </label>}
-        <button type="submit">Get Collisions Per Borough</button>
+        <button type="submit">Get Collisions</button>
       </form>
       <h2>Get Collisions in {borough}:</h2>
       <ul>

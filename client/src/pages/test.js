@@ -57,7 +57,7 @@ function Query2() {
       },
       title: {
         display: true,
-        text: 'Chart.js Line Chart',
+        text: 'Avg Vehicle Count vs. Date',
       },
     },
     scales: {
@@ -100,7 +100,7 @@ ChartJS.register(
     <div className="App">
       <div>
         <Navbar />
-        <p>Hourly volume count of streets that have had direction changes, before and after changes</p>
+        <p>Daily average volume count of streets that have had direction changes, before and after changes</p>
         <p>query 2</p>
       </div>
       <form onSubmit={handleSubmit}>
@@ -112,7 +112,7 @@ ChartJS.register(
             onChange={(event) => setStreet(event.target.value)}
           />
         </label>}
-        <button type="submit">View traffic patterns before and after change</button>
+        <button type="submit">View Traffic Patterns</button>
       </form>
       <h2>Traffic Count on {street}:</h2>
       <ul>

@@ -14,7 +14,7 @@ function App() {
         <div class="opt">
           <Link to="/closure"><button className="button" class="button">Busy Boroughs Q4</button></Link>
           <Link to="/electric"><button className="button" class="button">Electric Vehicle Use Q5</button></Link>
-          <Link to="/borough"><button className="button" class="button">Dangerous Streets Q3</button></Link>
+          <Link to="/borough"><button className="button" class="button">Borough Collisions Q3</button></Link>
           <Link to="/custom"><button className="button" class="button">Construction Closures Q1</button></Link>
           <Link to="/test"><button className="button" class="button">Direction Changes Q2</button></Link>
         </div>

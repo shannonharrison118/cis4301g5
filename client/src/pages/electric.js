@@ -63,7 +63,7 @@ function Query5() {
       },
       title: {
         display: true,
-        text: 'Chart.js Line Chart',
+        text: 'EV Registrations vs. Median Income vs. Year',
       },
     },
     scales: {
@@ -111,7 +111,7 @@ function Query5() {
     <div className="App">
       <div>
         <Navbar />
-        <p>graphs and analysis related to electric cars</p>
+        <p>View the trend of electric vehicle use and median income.</p>
         <p>query 5</p>
       </div>
       <form onSubmit={handleSubmit}>

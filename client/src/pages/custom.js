@@ -36,6 +36,7 @@ function Query1() {
       //labels,
       datasets: [
         {
+          label: 'Average number of cars',
           data: avgTraffic.map((data) => ({x: data.day, y: data.avg_traffic})),
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
@@ -57,7 +58,7 @@ function Query1() {
         },
         title: {
           display: true,
-          text: 'Chart.js Line Chart',
+          text: 'Avg Vehicle Count vs. Date',
         },
       },
       scales: {
@@ -100,7 +101,7 @@ function Query1() {
     <div className="App">
       <div>
         <Navbar />
-        <p>graphs and analysis related to borough specific trends in traffic</p>
+        <p>For a given street, view the average volume count for each day during construction closures. Data given is during work hours (9am - 5pm)</p>
         <p>query 1</p>
       </div>
       <form onSubmit={handleSubmit}>
@@ -112,7 +113,7 @@ function Query1() {
             onChange={(event) => setStreet(event.target.value)}
           />
         </label>}
-        <button type="submit">Get Average Traffic Count during work hours</button>
+        <button type="submit">Get Average Traffic Count During Closures</button>
       </form>
       <h2>Average Traffic Count on {street}:</h2>
       <ul>

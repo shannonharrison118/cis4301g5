@@ -7,10 +7,11 @@ export const Navbar = () => {
   return(
     <div id="nav">
         <Link id="navlink" to="/">Home</Link>
-        <Link id="navlink" to="/borough">Dangerous</Link>
-        <Link id="navlink" to="/closure">Closures and Construction</Link>
-        <Link id="navlink" to="/electric">Electric Cars</Link>
-        <Link id="navlink" to="/custom">Custom Search</Link>
+        <Link id="navlink" to="/borough">Borough Collisions</Link>
+        <Link id="navlink" to="/closure">Busy Boroughs</Link>
+        <Link id="navlink" to="/electric">Electric Vehicle Use</Link>
+        <Link id="navlink" to="/custom">Construction Closures</Link>
+        <Link id="navlink" to="/test">Direction Changes</Link>
     </div>
   );
 };
