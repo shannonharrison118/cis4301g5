@@ -15,6 +15,7 @@ import { Line } from 'react-chartjs-2';
 import axios from 'axios';
 import '../App.css';
 
+
 function Query2() {
   const [street, setStreet] = useState('');
   const [avgTraffic, setAvgTraffic] = useState([]);
@@ -39,6 +40,14 @@ function Query2() {
         data: avgTraffic.map((data) => ({x: data.d, y: data.sum_vol_dir})),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        xAxisID: "x",
+        yAxisID: "y"
+      },
+      {
+        label: 'Traffic Change Day',
+        data: avgTraffic.map((data) => ({x: data.changeday, y: data.sum_vol_dir})),
+        borderColor: 'rgb(111, 99, 132)',
+        backgroundColor: 'rgba(111, 99, 132, 0.5)',
         xAxisID: "x",
         yAxisID: "y"
       },
@@ -75,6 +84,15 @@ function Query2() {
         type: 'linear',
         display: true,
         position: 'left'
+      },
+      y2: {
+        display: true,
+        
+        max: 50,
+        min: 0,
+        ticks: {
+          stepSize: 1
+        } 
       },
     },
     options: {
