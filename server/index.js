@@ -22,7 +22,7 @@ Copy path into initOracleClient and replace it
 */         
 
 //oracledb.initOracleClient({libDir: 'C:/oracle/instantclient-basic-windows.x64-19.18.0.0.0dbru/instantclient_19_18'});            
-oracledb.initOracleClient({libDir: '/Users/shannonharrison/Downloads/instantclient_19_8'}); 
+oracledb.initOracleClient({libDir: '/Users/ekin/Downloads/instantclient_19_8'}); 
 //oracledb.initOracleClient({libDir: 'C:/Users/trist/Oracle/instantclient_21_9'});    
 
 app.options('/getQuery1', function (req, res) {

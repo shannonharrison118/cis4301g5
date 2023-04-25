@@ -24,7 +24,7 @@ function Query2() {
     <div className="App">
       <div>
         <Navbar />
-        <p>graphs and analysis related to borough specific trends in traffic</p>
+        <p>Hourly volume count of streets that have had direction changes, before and after changes</p>
         <p>query 2</p>
       </div>
       <form onSubmit={handleSubmit}>
@@ -36,9 +36,9 @@ function Query2() {
             onChange={(event) => setStreet(event.target.value)}
           />
         </label>}
-        <button type="submit">Get Average Traffic Count during work hours</button>
+        <button type="submit">View traffic patterns before and after change</button>
       </form>
-      <h2>Average Traffic Count on {street}:</h2>
+      <h2>Traffic Count on {street}:</h2>
       <ul>
         {avgTraffic.map((data, index) => (
           <li key={index}>
